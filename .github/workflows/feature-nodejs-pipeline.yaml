@@ -35,7 +35,18 @@ jobs:
     - name: install dependencies
       run: npm install
     - name: run unit tests
+      id: unit_tests
       run: echo "run unit tests"
+
+    - name: Update commit status (final)
+      if: always()
+      uses: ./.github/actions/update-commit-status
+      with:
+        sha: ${{ github.sha }}
+        state: ${{ steps.unit_tests.outcome }}     # success / failure / cancelled
+        context: UNIT_TESTS
+        description: "Docker build ${{ job.status }}"
+
     - name: docker build
       run: |
         docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.project }}/${{ inputs.component }}:${APP_VERSION} .
