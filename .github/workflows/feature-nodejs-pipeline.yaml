@@ -45,7 +45,7 @@ jobs:
         sha: ${{ github.sha }}
         state: ${{ steps.unit_tests.outcome }}     # success / failure / cancelled
         context: UNIT_TESTS
-        description: "Docker build ${{ job.status }}"
+        description: "${{ job.status }}"
 
     - name: docker build
       run: |
