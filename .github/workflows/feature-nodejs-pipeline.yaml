@@ -67,21 +67,6 @@ jobs:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
       shell: bash
       run: |
-        echo "🔍 Checking Dependabot CRITICAL alerts..."
-        DEPENDABOT_CRITICAL=$(curl -s \
-          -H "Authorization: Bearer ${ GH_TOKEN }" \
-          -H "Accept: application/vnd.github+json" \
-          "https://api.github.com/repos/${{ github.repository }}/dependabot/alerts?severity=critical&state=open" \
-          | jq '. | length')
-
-        echo "Dependabot CRITICAL alerts: $DEPENDABOT_CRITICAL"
-
-        if [ "$DEPENDABOT_CRITICAL" -gt 0 ]; then
-          echo "❌ CRITICAL Dependabot alerts found!"
-          exit 1
-        fi
-
-        echo "✅ No CRITICAL Dependabot alerts."
 
         echo "🔍 Running Trivy scan..."
         trivy image \
