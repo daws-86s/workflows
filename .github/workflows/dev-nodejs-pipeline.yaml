@@ -121,3 +121,11 @@ jobs:
       run:
         "helm upgrade --install ${{ inputs.component}} -f values-${{ inputs.environment }}.yaml -n ${{ inputs.project }} --set deployment.imageVersion=${APP_VERSION} --atomic --wait --timeout=5m"
 
+    - name: Update DEV Deploy status
+      if: always()
+      uses: daws-86s/workflows/.github/actions/update-commit-status@main
+      with:
+        sha: ${{ github.sha }}
+        state: ${{ steps.dev_deploy.outcome }}     # success / failure / cancelled
+        context: DEV_DEPLOY
+        description: ${{ steps.dev_deploy.outcome }}
