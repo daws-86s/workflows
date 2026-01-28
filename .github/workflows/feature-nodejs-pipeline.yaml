@@ -63,11 +63,13 @@ jobs:
 
     - name: Security Check (Dependabot + Trivy)
       id: security_check
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       shell: bash
       run: |
         echo "🔍 Checking Dependabot CRITICAL alerts..."
         DEPENDABOT_CRITICAL=$(curl -s \
-          -H "Authorization: Bearer ${{ github.token }}" \
+          -H "Authorization: Bearer ${ GH_TOKEN }" \
           -H "Accept: application/vnd.github+json" \
           "https://api.github.com/repos/${{ github.repository }}/dependabot/alerts?severity=critical&state=open" \
           | jq '. | length')
