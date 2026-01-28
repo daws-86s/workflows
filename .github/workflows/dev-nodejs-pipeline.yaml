@@ -107,4 +107,17 @@ jobs:
         docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${{ inputs.project }}/${{ inputs.component }}:${APP_VERSION}
 
     - name: authenticate to EKS
-      run: echo "authentication"
+      run: |
+        aws eks update-kubeconfig --region us-east-1 --name roboshop-dev
+        kubectl get nodes
+
+    - name: checkout catalogue deploy repo
+      uses: actions/checkout@v6
+      with:
+        repository: daws-86s/catalogue-deploy
+
+    - name: deploy to DEV cluster
+      id: dev_deploy
+      run:
+        helm upgrade --install ${{ inputs.component} } -f values-${{ inputs.environment }.yaml -n ${inputs.project } --set deployment.imageVersion=${APP_VERSION} --atomic --wait --timeout=5m
+
