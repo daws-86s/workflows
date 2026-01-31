@@ -67,3 +67,24 @@ jobs:
           fi
 
           echo "🎉 All required checks passed"
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: authenticate to EKS
+        run: |
+          aws eks update-kubeconfig --region us-east-1 --name roboshop-dev
+          kubectl get nodes
+
+      - name: checkout catalogue deploy repo
+        uses: actions/checkout@v6
+        with:
+          repository: daws-86s/catalogue-deploy
+
+      - name: deploy to ${{ inputs.environment }} cluster
+        id: uat_deploy
+        run:
+          "helm upgrade --install catalogue -f values-dev.yaml -n roboshop --set deployment.imageVersion=${SHORT_SHA} --atomic --wait --timeout=5m ."
