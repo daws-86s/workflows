@@ -18,7 +18,7 @@ jobs:
       - name: Compute short commit
         id: commit
         run: |
-          SHORT_SHA=${{ inputs.sha }}
+          SHORT_SHA=${{ inputs.version }}
           SHORT_SHA=${SHORT_SHA:0:9}
           echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
           echo "Short commit: $SHORT_SHA"
