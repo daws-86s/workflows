@@ -89,5 +89,6 @@ jobs:
 
       - name: deploy to ${{ inputs.environment }} cluster
         id: uat_deploy
-        run:
+        run: |
+          echo "Deploying version: $APP_VERSION"
           "helm upgrade --install catalogue -f values-dev.yaml -n roboshop --set deployment.imageVersion=${APP_VERSION} --atomic --wait --timeout=5m ."
