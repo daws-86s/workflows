@@ -90,3 +90,12 @@ jobs:
       - name: deploy to ${{ inputs.environment }} cluster
         id: uat_deploy
         run: "helm upgrade --install catalogue -f values-dev.yaml -n roboshop --set deployment.imageVersion=${APP_VERSION} --atomic --wait --timeout=5m ."
+
+      - name: Update Deploy status
+        if: always()
+        uses: daws-86s/workflows/.github/actions/update-commit-status@main
+        with:
+          sha: ${{ github.sha }}
+          state: ${{ steps.uat_deploy.outcome }}     # success / failure / cancelled
+          context: UAT_DEPLOY
+          description: ${{ steps.uat_deploy.outcome }}
