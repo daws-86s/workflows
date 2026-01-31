@@ -95,5 +95,5 @@ jobs:
         with:
           sha: ${{ inputs.version }}
           state: ${{ steps.prod_deploy.outcome }}     # success / failure / cancelled
-          context: UAT_DEPLOY
+          context: PROD_DEPLOY
           description: ${{ steps.prod_deploy.outcome }}
