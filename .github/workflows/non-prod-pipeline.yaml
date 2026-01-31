@@ -36,7 +36,7 @@ jobs:
             "DEV_DEPLOY"
             "DOCKER_BUILD"
             "UNIT_TESTS"
-            "SECURITY_GATE"
+            "SECURITY_CHECK"
           )
 
           RESPONSE=$(curl -s \
