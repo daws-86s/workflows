@@ -9,6 +9,9 @@ on:
       environment:
         required: true
         type: string
+permissions:
+  contents: read
+  statuses: read
 
 jobs:
   non-prod-gate:
