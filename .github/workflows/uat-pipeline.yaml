@@ -1,0 +1,66 @@
+name: NON-PROD Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+jobs:
+  non-prod-gate:
+    runs-on: self-hosted
+
+    steps:
+      - name: Compute short commit
+        id: commit
+        run: |
+          SHORT_SHA=${{ inputs.sha }}
+          SHORT_SHA=${SHORT_SHA:0:9}
+          echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "Short commit: $SHORT_SHA"
+
+      - name: Check required commit statuses
+        id: gate
+        shell: bash
+        run: |
+          echo "🔍 Checking commit statuses for ${{ inputs.sha }}"
+
+          REQUIRED_CONTEXTS=(
+            "DEV_DEPLOY"
+            "DOCKER_BUILD"
+            "UNIT_TESTS"
+            "SECURITY_GATE"
+          )
+
+          RESPONSE=$(curl -s \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/commits/${{ inputs.sha }}/statuses")
+
+          FAILED=0
+
+          for CONTEXT in "${REQUIRED_CONTEXTS[@]}"; do
+            STATE=$(echo "$RESPONSE" | jq -r \
+              ".[] | select(.context == \"$CONTEXT\") | .state" | head -n 1)
+
+            if [ -z "$STATE" ]; then
+              echo "❌ $CONTEXT → status missing"
+              FAILED=1
+            elif [ "$STATE" != "success" ]; then
+              echo "❌ $CONTEXT → $STATE"
+              FAILED=1
+            else
+              echo "✅ $CONTEXT → success"
+            fi
+          done
+
+          if [ "$FAILED" -eq 1 ]; then
+            echo "🚫 UAT gate failed"
+            exit 1
+          fi
+
+          echo "🎉 All required checks passed"
