@@ -30,7 +30,7 @@ jobs:
         id: gate
         shell: bash
         run: |
-          echo "🔍 Checking commit statuses for ${{ inputs.sha }}"
+          echo "🔍 Checking commit statuses for ${{ inputs.version }}"
 
           REQUIRED_CONTEXTS=(
             "DEV_DEPLOY"
@@ -42,7 +42,7 @@ jobs:
           RESPONSE=$(curl -s \
             -H "Authorization: Bearer ${{ github.token }}" \
             -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/${{ github.repository }}/commits/${{ inputs.sha }}/statuses")
+            "https://api.github.com/repos/${{ github.repository }}/commits/${{ inputs.version }}/statuses")
 
           FAILED=0
 
