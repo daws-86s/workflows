@@ -22,8 +22,8 @@ jobs:
         id: commit
         run: |
           SHORT_SHA=${{ inputs.version }}
-          SHORT_SHA=${SHORT_SHA:0:9}
-          echo "APP_VERSION=$SHORT_SHA" >> $GITHUB_ENV
+          APP_VERSION=${SHORT_SHA:0:9}
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
           echo "Short commit: $APP_VERSION"
 
       - name: Check required commit statuses
